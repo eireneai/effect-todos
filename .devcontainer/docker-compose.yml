@@ -1,0 +1,17 @@
+services:
+  devcontainer:    
+    image: mcr.microsoft.com/devcontainers/base:jammy
+    command: ["sleep", "infinity"]
+    network_mode: service:mongo
+    environment:
+      MONGO_USERNAME: $MONGO_USERNAME
+      MONGO_PASSWORD: $MONGO_PASSWORD
+    volumes:
+      - ../..:/workspaces:cached
+      - $HOME/.ssh:/home/vscode/.ssh:cached
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
