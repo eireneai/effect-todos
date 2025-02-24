@@ -59,6 +59,12 @@ const program = Effect.logInfo('Hello world!')
 NodeRuntime.runMain(program)
 ```
 
+Visit the effect website and review the documentation to the point where you can answer the following questions:
+1) What are the three type paramaters in the effect type and what do they represent?
+2) How are checked errors different that defects?
+3) How can effects be composed and combined into larger programs?
+4) How is generator syntax applied to write effect programs in a procedural style?  
+
 ## Rewrite an example todos API using effect
 
 Visit the following public repository:
