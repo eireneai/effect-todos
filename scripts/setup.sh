@@ -1,1 +1,2 @@
-npm add --global nx@^20.4.5
+npm install --verbose
+npm add --global --verbose nx@^20.4.5

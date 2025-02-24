@@ -1,52 +1,86 @@
 # EffectTodos
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+## Devcontainer Configuration
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+Using a devcontainer requires docker to be installed on your machine. The easiest way to get started with docker is by installing docker desktop.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+Create a new file at `.devcontainer/.env` and add the following values:
+```
+MONGO_USERNAME=root
+MONGO_PASSWORD=password
+```
+You should now be able to open the project in a devcontainer. Explore the `.devcontainer` directory and try to answer the following questions:
+1) How are different services run together in the workspace?
+2) How is node installed?
+3) How are other dependencies including global npm packages installed?
+4) How is VS code configuration stored as part of the devcontainer environment?
+5) How are environment variables set in different services?
 
-## Generate a library
+## NX Monorepo CLI
+
+Once you are up and running within the devcontainer, you should have the NX CLI installed as well as the VS code NX extension. Use the cli and the `@nx/node` plugin to scaffold a node app preconfigured with eslint, jest, webpack and an end-to-end test by running the following command:
 
 ```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+nx g @nx/node:app --name=server --directory=apps/server --linter=eslint --unitTestRunner=jest --e2eTestRunner=jest --bundler=webpack --dryRun
 ```
 
-## Run tasks
+The command will preview the files and directories to be created. Once you've run the command and know what to expect to be generated, remove the dry run flag and run the command again to actually generate the files.
 
-To build the library use:
+To run the generated node application, use the following commands:
 
-```sh
-npx nx build pkg1
+```
+nx build server
+nx serve server
+nx e2e server
 ```
 
-To run any task with Nx use:
+Try to answer the following questions about NX:
+1) Where are NX project configurations found?
+2) What is the difference between NX generators and executors?
+3) What is the NX dep graph?
+4) What are NX plugins?
 
-```sh
-npx nx <target> <project-name>
+## Install effect
+
+Review the instructions on the effect ts website for manual installation:
+
+https://effect.website/docs/quickstart#nodejs
+
+Some steps will not be necessary to follow. For example, NX has configured typescript and the ts compiler for us. To install effect, we simply need to run `npm install effect @effect/platform @effect/platform-node` and enable strict mode in our root `tsconfig.json`. 
+
+Once effect is installed in the workspace, remove the started code from the server application we generated in the previous step and replace it with a hello world effect application:
+
+```
+import { Effect } from 'effect'
+import { NodeRuntime } from '@effect/platform-node'
+
+const program = Effect.logInfo('Hello world!')
+
+NodeRuntime.runMain(program)
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+## Rewrite an example todos API using effect
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Visit the following public repository:
 
-## Install Nx Console
+https://github.com/andremartingo/node-rest-api-todo
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+Rewrite the express app using effect and effect platform in the new node server project that was scaffolded with NX.
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+The code in the example express app is organized by technical concern. Use the following effect modules to address each technical concern:
 
-## Useful links
+- config - `Config` module from `effect` to read configuration values from the environment  
+- controllers - `HttpApi` and `HttpApiBuilder` modules from `@effect/platform` to define http endpoints and implement request handlers
+- db - `Layer` module from `effect` to define the connection to mongoose as a managed resource
+- middleware - `HttpApiMiddleware` from `@effect/platform` to define authentication middleware
+- models - `Schema` module from `effect` to define todo and user models
+- routes - `HttpApiBuilder` from `@effect/platform` and `NodeHttpServer` from `@effect/platform-node`
 
-Learn more:
+Read through the following links to better understand what the various effect modules provide and how to use them:
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- https://effect.website/docs/configuration/
+- https://effect.website/docs/requirements-management/layers/#creating-layers
+- https://effect.website/docs/schema/introduction/#the-schema-type
+- https://github.com/Effect-TS/effect/blob/main/packages/platform/README.md#http-api
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Make sure to reach out on slack for help and clarification while completing this step.
